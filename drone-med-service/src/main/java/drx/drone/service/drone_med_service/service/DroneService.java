@@ -8,6 +8,7 @@ import drx.drone.service.drone_med_service.exception.MedicationNotFoundException
 import drx.drone.service.drone_med_service.model.Drone;
 import drx.drone.service.drone_med_service.model.Medication;
 import drx.drone.service.drone_med_service.model.State;
+import drx.drone.service.drone_med_service.model.WeightModel;
 import drx.drone.service.drone_med_service.repository.DroneRepository;
 import drx.drone.service.drone_med_service.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +24,25 @@ public class DroneService {
     private final DroneRepository droneRepository;
     private final MedicationRepository medicationRepository;
 
+    /**
+     *
+     * @param droneRequest -
+     *                     Serial Number - Unique Identifier generated on atlas on creation
+     *                     Battery Capacity - defaulted at a 100% on drone registering
+     *                     Weight class - Enum [LIGHT_WEIGHT, MIDDLE_WEIGHT, CRUISER_WEIGHT, HEAVY_WEIGHT]
+     *                     Weight Limit - max 500 grams depending on drone's weight class
+     *                     State - Enum [IDLE, LOADING, LOADED, DELIVERING, RETURNING]. Defaulted to STATE.IDLe on registering
+     *                     Loaded medications - {}
+     *
+     * @return
+     */
     public Optional<Drone> registerDrone(DroneRequest droneRequest){
         Drone drone = Drone.builder()
                 .serialNumber(droneRequest.getSerialNumber())
-                .batteryCapacity(droneRequest.getBatteryCapacity())
+                .batteryCapacity(100)
                 .weightClass(droneRequest.getWeightClass())
-                .weightLimit(droneRequest.getWeightLimit())
-                .state(droneRequest.getState()) // idle == available
+                .weightLimit(setWeightLimit(droneRequest.getWeightClass()))
+                .state(State.IDLE) // Default = State.Idle
                 .loadedMeds(new ArrayList<>())
                 .build();
         droneRepository.save(drone);
@@ -38,6 +51,17 @@ public class DroneService {
 
     public Optional<Drone> getDroneById(String serialNumber){
         return droneRepository.findById(serialNumber);
+    }
+
+    public float setWeightLimit(WeightModel weightModel){
+        float weightLimit = 0;
+        switch (weightModel){
+            case HEAVY_WEIGHT -> weightLimit = 500;
+            case MIDDLE_WEIGHT -> weightLimit = 400;
+            case LIGHT_WEIGHT -> weightLimit = 200;
+            case CRUISER_WEIGHT -> weightLimit = 100;
+        }
+        return weightLimit;
     }
 
     public void loadDrone(String serialNumber, MedRequest medRequest) throws Exception {
@@ -56,7 +80,7 @@ public class DroneService {
             Drone drone = optionalDrone.get();
             if (drone.getBatteryCapacity() >= 25){
                 float medWeight = medRequest.getWeight();
-                float droneWeight = drone.getWeightLimit(); // 500 constant?
+                float droneWeight = drone.getWeightLimit(); // 500 constant? or depending on drone's weight class
 
                 float totalLoadedWeight = getTotalLoadedWeight(drone);
 
@@ -67,10 +91,11 @@ public class DroneService {
                     String medID = medication.getId();
 
 
-                    drone.getLoadedMeds().add(medID);
-                    drone.setState(State.LOADING);
+                    drone.getLoadedMeds().add(medID);  // add medication ID
+                    drone.setState(State.LOADING);     // update drone state
+                    drone.setBatteryCapacity(drone.getBatteryCapacity() - 20);  // reduce battery level
 
-                    droneRepository.save(drone);
+                    droneRepository.save(drone);  // save updates
 
                 }else{
                     // create custom exceptions

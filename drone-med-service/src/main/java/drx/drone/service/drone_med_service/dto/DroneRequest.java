@@ -13,8 +13,10 @@ public class DroneRequest {
 
     public String serialNumber;
     public WeightModel weightClass;
-    public float weightLimit;
-    public Integer batteryCapacity;
-    public State state;
+
+    // public float weightLimit;
+    // public Integer batteryCapacity;
+    // public State state;
+
     public List<String> loadedMeds; // medication codes or UUIDs
 }
