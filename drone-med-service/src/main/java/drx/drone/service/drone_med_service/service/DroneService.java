@@ -13,10 +13,8 @@ import drx.drone.service.drone_med_service.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class DroneService {
                 .batteryCapacity(droneRequest.getBatteryCapacity())
                 .weightClass(droneRequest.getWeightClass())
                 .weightLimit(droneRequest.getWeightLimit())
-                .state(droneRequest.getState())
+                .state(droneRequest.getState()) // idle == available
                 .loadedMeds(new ArrayList<>())
                 .build();
         droneRepository.save(drone);
@@ -54,28 +52,35 @@ public class DroneService {
 
         Optional<Drone> optionalDrone = droneRepository.findById(serialNumber);
         if(optionalDrone.isPresent()){
+
             Drone drone = optionalDrone.get();
-            float medWeight = medRequest.getWeight();
-            float droneWeight = drone.getWeightLimit(); // 500 constant?
+            if (drone.getBatteryCapacity() >= 25){
+                float medWeight = medRequest.getWeight();
+                float droneWeight = drone.getWeightLimit(); // 500 constant?
 
-            float totalLoadedWeight = getTotalLoadedWeight(drone);
+                float totalLoadedWeight = getTotalLoadedWeight(drone);
 
-            if(medWeight + totalLoadedWeight <= droneWeight){
-                Medication medication = buildMedication(medRequest);
-                medicationRepository.save(medication);
+                if(medWeight + totalLoadedWeight <= droneWeight){
+                    Medication medication = buildMedication(medRequest);
+                    medicationRepository.save(medication);
 
-                String medID = medication.getId();
+                    String medID = medication.getId();
 
 
-                drone.getLoadedMeds().add(medID);
-                drone.setState(State.LOADED);
+                    drone.getLoadedMeds().add(medID);
+                    drone.setState(State.LOADING);
 
-                droneRepository.save(drone);
+                    droneRepository.save(drone);
 
+                }else{
+                    // create custom exceptions
+                    throw new DroneOverWeightException();
+                }
             }else{
-                // create custom exceptions
-                throw new DroneOverWeightException();
+                // battery level exception
+                throw new Exception("Battery level below 25%");
             }
+
         }else{
             throw new DroneNotExistException(serialNumber);
         }
@@ -104,5 +109,35 @@ public class DroneService {
                         .orElseThrow(() -> new MedicationNotFoundException(medId)))
                 .map(Medication::getWeight)
                 .reduce(0f, Float::sum);
+    }
+
+    public Optional<List<Medication>> getLoadedMeds(String serialNumber){
+        Optional<Drone> droneOptional = droneRepository.findById(serialNumber);
+        List<Medication> meds = new ArrayList<>();
+        if(droneOptional.isPresent()){
+            List<String> loadedMedsIds = droneOptional.get().getLoadedMeds();
+            for (String loadedMedsId : loadedMedsIds) {
+                Optional<Medication> med = medicationRepository.findById(loadedMedsId);
+                med.ifPresent(meds::add);
+
+            }
+        }
+
+        return Optional.of(meds);
+    }
+
+    public Optional<List<Drone>> getIdleDrones() {
+        List<Drone> idleDrones = droneRepository.findAll().stream()
+                .filter(drone -> drone.getState() == State.IDLE)
+                .collect(Collectors.toList());
+        return Optional.of(idleDrones);
+    }
+
+    public int getBatteryLevel(String serialNumber){
+       Optional<Drone> d = droneRepository.findById(serialNumber);
+       if (d.isPresent()){
+           return d.get().getBatteryCapacity();
+       }
+       return 0;
     }
 }

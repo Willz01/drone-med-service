@@ -16,13 +16,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/drone")
+@RequiredArgsConstructor
 public class DroneController {
 
     private final DroneService service;
-
-    public DroneController(DroneService service) {
-        this.service = service;
-    }
 
     /**
      *
@@ -46,14 +43,6 @@ public class DroneController {
     @PostMapping("/{serialNumber}/loadMeds")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<String> loadDrone(@PathVariable String serialNumber, @RequestBody MedRequest medication) throws Exception {
-
-        // use serial-number to find drone
-        // handle weight limit
-        // (yes)
-        // save med to medications table
-        // save item(med-code) to drone loadedMeds list
-        // (no)
-        // cant save
         service.loadDrone(serialNumber, medication);
         return ResponseEntity.ok("Medication loaded on drone " + serialNumber);
     }
@@ -61,31 +50,29 @@ public class DroneController {
     // check loaded items
     @GetMapping("/{serialNumber}/medications")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<List<Medication>> getLoadedMeds(){
+    public Optional<List<Medication>> getLoadedMeds(@PathVariable("serialNumber") String serialNumber){
 
         // get drone with serial-number
-        // get loadedMeds ids
+        // get drone loadedMeds ids
         // get saved meds from meds table using loadedMedsIds
-        // return list of meds with those ids
+        // return list of meds
 
-        return null;
+        return service.getLoadedMeds(serialNumber);
     }
 
     // checking avai drones for loading
     @GetMapping("/available")
     @ResponseStatus(HttpStatus.OK)
     public Optional<List<Drone>> getAvailableDrones(){
-        // return drones marked as 'available'
-        return null;
+        // return drones marked as 'available' or 'idle'
+        return service.getIdleDrones();
     }
 
     @GetMapping("/{serialNumber}/battery")
     @ResponseStatus(HttpStatus.OK)
-    public String getBatteryLevel(@PathVariable String serial_number){
+    public int getBatteryLevel(@PathVariable String serial_number){
         // return battery level of drone(serial-number)
-        return null;
+        return service.getBatteryLevel(serial_number);
     }
-
-
 
 }
