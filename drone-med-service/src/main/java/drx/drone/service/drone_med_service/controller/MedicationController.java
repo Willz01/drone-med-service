@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "api/v1/medication")
+@RequestMapping(path = "api/v1/medications")
 @RequiredArgsConstructor
 public class MedicationController {
 

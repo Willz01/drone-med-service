@@ -25,7 +25,7 @@ function RegisterDronePage() {
         console.log("Registering drone:", formData);
 
 
-        fetch("http://localhost:8080/api/v1/drone/register", {
+        fetch("http://localhost:8080/api/v1/drones/register", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(formData),

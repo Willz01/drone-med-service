@@ -23,7 +23,7 @@ Before setting up the project, ensure you have the following installed:
   - An IDE (e.g., IntelliJ IDEA, Eclipse) (optional, for IDE-based running)
 
 - **Frontend**:
-  - Bun (latest version, install from https://bun.sh/)
+  - Bun (Install from https://bun.sh/)
   - Node.js (optional, for compatibility, but Bun is preferred)
 
 - **Git**:
@@ -34,18 +34,26 @@ Before setting up the project, ensure you have the following installed:
 The project is organized as a monorepo with both backend and frontend in the same repository:
 
 ```
-drone-medic-service/
+drone-med-service/
 ├── backend/
 │   ├── src/
 │   │   ├── main/
-│   │   │   ├── java/com/example/dronemedicservice/
+│   │   │   ├── java/com/example/drone-med-service/
+│   │   │   │   ├──── src/main/java
+│   │   │   │   │     ├──── config/
+│   │   │   │   │     ├──── controller/
+│   │   │   │   │     ├──── dto/
+│   │   │   │   │     ├──── exception/
+│   │   │   │   │     ├──── model/
+│   │   │   │   │     ├──── repository/
+│   │   │   │   │     ├──── service/
 │   │   │   ├── resources/application.properties
 │   ├── pom.xml
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── DroneList.jsx
-│   │   │   ├── DeliveryForm.jsx
+│   │   │   ├── DroneCard.tsx
+│   │   │   ├── MedicationCard.tsx
 │   ├── package.json
 │   ├── bun.lockb
 ├── .gitignore
@@ -61,12 +69,12 @@ The backend is a Java Spring Boot application that connects to a MongoDB Atlas d
 1. **Clone the Repository**:
    ```bash
    git clone <repository-url>
-   cd drone-medic-service
+   cd drone-med-service
    ```
 
 2. **Configure MongoDB Atlas**:
    - Create a MongoDB Atlas account and set up a cluster.
-   - Obtain the MongoDB connection string (e.g., `mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority`).
+   - Get the MongoDB connection string (e.g., `mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority`).
    - Open the `backend/src/main/resources/application.properties` file and update the following properties:
      ```properties
      spring.data.mongodb.uri=<your-mongodb-atlas-connection-string>
@@ -75,10 +83,6 @@ The backend is a Java Spring Boot application that connects to a MongoDB Atlas d
    - Replace `<your-mongodb-atlas-connection-string>` with your MongoDB Atlas connection string and `<your-database-name>` with the name of your database (e.g., `drone_medic_db`).
 
 3. **Install Dependencies**:
-   - Navigate to the backend directory:
-     ```bash
-     cd backend
-     ```
    - Run the following command to download dependencies:
      ```bash
      mvn clean install
@@ -86,7 +90,7 @@ The backend is a Java Spring Boot application that connects to a MongoDB Atlas d
 
 ### Running from Terminal
 
-1. From the `backend` directory, run the Spring Boot application:
+1. In the `drone-med-service` directory, run the Spring Boot application:
    ```bash
    mvn spring-boot:run
    ```
@@ -95,9 +99,9 @@ The backend is a Java Spring Boot application that connects to a MongoDB Atlas d
 
 ### Running from an IDE
 
-1. Open the `backend` folder in your preferred IDE (e.g., IntelliJ IDEA, Eclipse).
+1. In the `drone-med-service` folder in your preferred IDE (e.g., IntelliJ IDEA, Eclipse).
 2. Import the project as a Maven project.
-3. Locate the main application class (e.g., `DroneMedicApplication.java`) in `backend/src/main/java/com/example/dronemedicservice`.
+3. Locate the main application class (`DroneMedServiceApplication.java`).
 4. Right-click the main class and select **Run** or **Debug** to start the application.
 5. The backend will start on `http://localhost:8080`.
 
@@ -121,7 +125,7 @@ The frontend is a React application built with Bun for package management and ru
      ```bash
      bun run dev
      ```
-   - The frontend will be available at `http://localhost:3000` (or another port if specified).
+   - The frontend will be available at `http://localhost:3000`
 
 4. **Build for Production** (optional):
    - To create a production build:
@@ -135,104 +139,54 @@ The frontend is a React application built with Bun for package management and ru
 
 ## Backend Endpoints and Frontend Integration
 
-The backend exposes RESTful API endpoints that the frontend uses to fetch and manage data related to drones and medical deliveries.
+The backend exposes RESTful API endpoints that the frontend uses to fetch and manage data related to drones and medications.
 
 ### Backend Endpoints
 
 The backend provides the following endpoints (adjust based on your actual implementation):
 
-- **GET /api/drones**:
+- **GET api/v1/drones**:
   - **Description**: Retrieves a list of all drones.
-  - **Response**: JSON array of drone objects (e.g., `{ id, model, status, batteryLevel }`).
-  - **Example**: `GET http://localhost:8080/api/drones`
+  - **Response**: JSON array of drone objects (`{ serialNumber, weightClass, weightLimit, batteryCapacity, state, LoadedMeds }`).
+  - **Example**: `GET http://localhost:8080/v1/api/drones`
 
-- **GET /api/drones/{id}**:
-  - **Description**: Retrieves details of a specific drone by ID.
+- **GET api/v1/drones/{serialNumber}**:
+  - **Description**: Retrieves details of a specific drone by serialNumber.
   - **Response**: JSON object of a single drone.
-  - **Example**: `GET http://localhost:8080/api/drones/123`
+  - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd`
 
-- **POST /api/deliveries**:
-  - **Description**: Creates a new delivery request.
-  - **Request Body**: JSON object (e.g., `{ droneId, destination, payload }`).
-  - **Response**: JSON object of the created delivery.
-  - **Example**: `POST http://localhost:8080/api/deliveries`
+- **POST api/v1/drones/register**:
+  - **Description**: Register a new drone.
+  - **Request Body**: JSON object (`{ weightClass }`).
+  - **Response**: JSON object of the created drone.
+  - **Example**: `POST http://localhost:8080/v1/api/drones/register`
 
-- **GET /api/deliveries**:
-  - **Description**: Retrieves a list of all deliveries.
-  - **Response**: JSON array of delivery objects (e.g., `{ id, droneId, destination, status }`).
-  - **Example**: `GET http://localhost:8080/api/deliveries`
+- **POST api/v1/drones/{serialNumber}/loadMeds**:
+  - **Description**: Load drone with medications.
+  - **RequestBody**: JSON object of MedRequest (`{ name, code, weight }`)
+  - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/loadMeds`
 
-### Frontend Data Fetching
+- **GET api/v1/drones/{serialNumber}/medications**:
+    - **Description**: Get medications loaded on a particular drones.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/medications`
+    - **Response**: JSON array of med objects loaded on the drone
 
-The frontend uses the `fetch` API to interact with the backend endpoints. Below is an example of how the frontend fetches and displays data (in `frontend/src/components/DroneList.jsx`):
+- **GET api/v1/drones/available**:
+    - **Description**: Get all available drone <Idle>.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/available`
+    - **Response**: JSON list of all available drones
 
-```jsx
-import React, { useEffect, useState } from 'react';
+- **GET api/v1/drones/{serialNumber}/battery**:
+    - **Description**: Get battery level of drone.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/battery`
+    - **Response**: Battery level of drone
 
-function DroneList() {
-  const [drones, setDrones] = useState([]);
-  const [loading, setLoading] = useState(true);
+- **GET api/v1/drones/{serialNumber}/battery**:
+    - **Description**: Get battery level of drone.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/battery`
+    - **Response**: Battery level of drone
 
-  useEffect(() => {
-    const fetchDrones = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/drones');
-        const data = await response.json();
-        setDrones(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching drones:', error);
-        setLoading(false);
-      }
-    };
-    fetchDrones();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-
-  return (
-    <div className="p-4">
-      <h2 className="text-2xl">Drones</h2>
-      <ul>
-        {drones.map((drone) => (
-          <li key={drone.id} className="py-2">
-            {drone.model} - {drone.status} (Battery: {drone.batteryLevel}%)
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default DroneList;
-```
-
-### Explanation of Frontend-Backend Integration
-
-- **Fetching Drones**:
-  - The `DroneList` component uses the `fetch` API to call `GET /api/drones` when the component mounts (via `useEffect`).
-  - The response is stored in the `drones` state and rendered as a list.
-
-- **Creating a Delivery**:
-  - A form component (e.g., `DeliveryForm.jsx`) collects user input (e.g., drone ID, destination) and sends a `POST` request to `/api/deliveries`.
-  - Example:
-    ```jsx
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      const delivery = { droneId: '123', destination: 'Hospital A', payload: 'Medical Supplies' };
-      await fetch('http://localhost:8080/api/deliveries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(delivery),
-      });
-    };
-    ```
-
-- **Fetching Deliveries**:
-  - Similar to the drone list, a `DeliveryList` component can fetch `GET /api/deliveries` to display delivery statuses.
-
-- **CORS Configuration**:
-  - Ensure the backend is configured to allow CORS requests from the frontend (`http://localhost:3000`). Add the following to your Spring Boot `application.properties` if needed:
-    ```properties
-    spring.web.cors.allowed-origins=http://localhost:3000
-    ```
+- **GET api/v1/medications**:
+    - **Description**: Get all saved medications.
+    - **Example**: `GET http://localhost:8080/v1/api/medications`
+    - **Response**: JSON list of all medications

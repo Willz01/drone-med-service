@@ -9,7 +9,7 @@ function DronesPage() {
     useEffect(() => {
         async function loadDrones() {
             try {
-                const res = await fetch("http://localhost:8080/api/v1/drone"); // get all drones
+                const res = await fetch("http://localhost:8080/api/v1/drones"); // get all drones
                 const data = await res.json();
                 setDroneList(data);
             } catch (error) {

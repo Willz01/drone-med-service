@@ -9,7 +9,7 @@ export default function MedicationsPage() {
     useEffect(() => {
         async function loadMedications() {
             try {
-                const res = await fetch("http://localhost:8080/api/v1/medication"); // get all drones
+                const res = await fetch("http://localhost:8080/api/v1/medications"); // get all drones
                 const data = await res.json();
                 setMedicationsList(data);
             } catch (error) {
