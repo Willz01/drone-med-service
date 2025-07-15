@@ -34,7 +34,7 @@ public class DroneService {
      *                     State - Enum [IDLE, LOADING, LOADED, DELIVERING, RETURNING]. Defaulted to STATE.IDLe on registering
      *                     Loaded medications - {}
      *
-     * @return
+     * @return - returns Optional of Drone
      */
     public Optional<Drone> registerDrone(DroneRequest droneRequest){
         Drone drone = Drone.builder()
@@ -93,16 +93,16 @@ public class DroneService {
 
                     drone.getLoadedMeds().add(medID);  // add medication ID
                     drone.setState(State.LOADING);     // update drone state
-                    drone.setBatteryCapacity(drone.getBatteryCapacity() - 20);  // reduce battery level
+                    drone.setBatteryCapacity(drone.getBatteryCapacity() - 15);  // reduce battery level
 
                     droneRepository.save(drone);  // save updates
 
                 }else{
-                    // create custom exceptions
+                    drone.setState(State.LOADED);
                     throw new DroneOverWeightException();
                 }
             }else{
-                // battery level exception
+                drone.setState(State.LOADED); // system charge ?????
                 throw new Exception("Battery level below 25%");
             }
 
@@ -156,6 +156,10 @@ public class DroneService {
                 .filter(drone -> drone.getState() == State.IDLE)
                 .collect(Collectors.toList());
         return Optional.of(idleDrones);
+    }
+
+    public Optional<List<Drone>> getAllDrones(){
+        return Optional.of(droneRepository.findAll());
     }
 
     public int getBatteryLevel(String serialNumber){
