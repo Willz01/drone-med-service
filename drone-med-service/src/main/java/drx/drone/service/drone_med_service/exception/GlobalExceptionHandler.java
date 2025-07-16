@@ -9,24 +9,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DroneNotExistException.class)
-    public ResponseEntity<ErrorResponse> handleDroneNotExistException(DroneNotExistException ex){
+    public ResponseEntity<ErrorResponse> handleDroneNotExistException(DroneNotExistException ex) {
         ErrorResponse errorResponse = new ErrorResponse("DRONE_NOT_FOUND", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DroneOverWeightException.class)
-    public ResponseEntity<ErrorResponse> handleDroneOverWeightException(DroneNotExistException ex){
+    public ResponseEntity<ErrorResponse> handleDroneOverWeightException(DroneNotExistException ex) {
         ErrorResponse errorResponse = new ErrorResponse("DRONE_WEIGHT_LIMIT", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MedicationNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleMedicationNotFoundException(DroneNotExistException ex){
+    public ResponseEntity<ErrorResponse> handleMedicationNotFoundException(DroneNotExistException ex) {
         ErrorResponse errorResponse = new ErrorResponse("MEDICATION_NOT_FOUND", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
 
-record ErrorResponse(String code, String message) {
-}

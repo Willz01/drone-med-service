@@ -13,7 +13,11 @@ import java.util.Optional;
 public class MedicationService {
     private final MedicationRepository repository;
 
-    public Optional<List<Medication>> getAllMedications(){
+    public Optional<List<Medication>> getAllMedications() {
         return Optional.of(repository.findAll());
+    }
+
+    public Optional<Medication> getMedication(String id) {
+        return repository.findById(id);
     }
 }

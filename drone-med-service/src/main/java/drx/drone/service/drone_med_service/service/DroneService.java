@@ -2,8 +2,7 @@ package drx.drone.service.drone_med_service.service;
 
 import drx.drone.service.drone_med_service.dto.DroneRequest;
 import drx.drone.service.drone_med_service.dto.MedRequest;
-import drx.drone.service.drone_med_service.exception.DroneNotExistException;
-import drx.drone.service.drone_med_service.exception.DroneOverWeightException;
+import drx.drone.service.drone_med_service.exception.ErrorResponse;
 import drx.drone.service.drone_med_service.exception.MedicationNotFoundException;
 import drx.drone.service.drone_med_service.model.Drone;
 import drx.drone.service.drone_med_service.model.Medication;
@@ -14,7 +13,9 @@ import drx.drone.service.drone_med_service.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,50 +65,55 @@ public class DroneService {
         return weightLimit;
     }
 
-    public void loadDrone(String serialNumber, MedRequest medRequest) throws Exception {
-        // use serial-number to find drone
-        // handle weight limit
-        // (yes)
-        // save med to medications table
-        // save item(med-code) to drone loadedMeds list
-        // update drone (weight, state, medList)
-        // (no)
-        // cant save
-
+    public ErrorResponse loadDrone(String serialNumber, MedRequest medRequest) throws Exception {
         Optional<Drone> optionalDrone = droneRepository.findById(serialNumber);
-        if(optionalDrone.isPresent()){
-
+        if (optionalDrone.isPresent()) {
             Drone drone = optionalDrone.get();
-            if (drone.getBatteryCapacity() >= 25){
-                float medWeight = medRequest.getWeight();
-                float droneWeight = drone.getWeightLimit(); // 500 constant? or depending on drone's weight class
 
-                float totalLoadedWeight = getTotalLoadedWeight(drone);
-
-                if(medWeight + totalLoadedWeight <= droneWeight){
-                    Medication medication = buildMedication(medRequest);
-                    medicationRepository.save(medication);
-
-                    String medID = medication.getId();
-
-
-                    drone.getLoadedMeds().add(medID);  // add medication ID
-                    drone.setState(State.LOADING);     // update drone state
-                    drone.setBatteryCapacity(drone.getBatteryCapacity() - 15);  // reduce battery level
-
-                    droneRepository.save(drone);  // save updates
-
-                }else{
-                    drone.setState(State.LOADED);
-                    throw new DroneOverWeightException();
-                }
-            }else{
-                drone.setState(State.LOADED); // system charge ?????
-                throw new Exception("Battery level below 25%");
+            // Check battery capacity
+            if (drone.getBatteryCapacity() < 25) {
+                return new ErrorResponse("601", "BATTERY LEVEL BELOW 25%");
             }
 
-        }else{
-            throw new DroneNotExistException(serialNumber);
+            float medWeight = medRequest.getWeight();
+            float totalLoadedWeight = getTotalLoadedWeight(drone);
+            float droneWeightLimit = drone.getWeightLimit();
+            float maxAllowableWeight = droneWeightLimit * 0.9f; // 90% of weight limit for safety
+
+            // Check maximum medication count
+            int maxMedCount = 10;
+            if (drone.getLoadedMeds().size() >= maxMedCount) {
+                drone.setState(State.LOADED);
+                droneRepository.save(drone);
+                return new ErrorResponse("602", "MAXIMUM MEDICATION COUNT REACHED");
+            }
+
+            // Check safe weight threshold
+            if (medWeight + totalLoadedWeight > maxAllowableWeight) {
+                drone.setState(State.LOADED);
+                droneRepository.save(drone);
+                return new ErrorResponse("605", "EXCEEDS SAFE WEIGHT THRESHOLD");
+            }
+
+            // Proceed with loading
+            if (medWeight + totalLoadedWeight <= droneWeightLimit) {
+                Medication medication = buildMedication(medRequest);
+                medicationRepository.save(medication);
+
+                String medID = medication.getId();
+                drone.getLoadedMeds().add(medID);
+                drone.setState(State.LOADING);
+                drone.setBatteryCapacity(drone.getBatteryCapacity() - 15);
+
+                droneRepository.save(drone);
+                return new ErrorResponse("200", "MEDS LOADED");
+            } else {
+                drone.setState(State.LOADED);
+                droneRepository.save(drone);
+                return new ErrorResponse("600", "DRONE OVER WEIGHT");
+            }
+        } else {
+            return new ErrorResponse("603", "DRONE DOES NOT EXIST");
         }
     }
 

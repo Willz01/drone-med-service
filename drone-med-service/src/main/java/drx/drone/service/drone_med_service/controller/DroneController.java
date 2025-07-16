@@ -3,12 +3,12 @@ package drx.drone.service.drone_med_service.controller;
 
 import drx.drone.service.drone_med_service.dto.DroneRequest;
 import drx.drone.service.drone_med_service.dto.MedRequest;
+import drx.drone.service.drone_med_service.exception.ErrorResponse;
 import drx.drone.service.drone_med_service.model.Drone;
 import drx.drone.service.drone_med_service.model.Medication;
 import drx.drone.service.drone_med_service.service.DroneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,9 +55,9 @@ public class DroneController {
      */
     @PostMapping("/{serialNumber}/loadMeds")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<String> loadDrone(@PathVariable String serialNumber, @RequestBody MedRequest medication) throws Exception {
-        service.loadDrone(serialNumber, medication);
-        return ResponseEntity.ok("Medication loaded on drone " + serialNumber);
+    public Optional<ErrorResponse> loadDrone(@PathVariable String serialNumber, @RequestBody MedRequest medication) throws Exception {
+        return Optional.of(service.loadDrone(serialNumber, medication));
+        //return ResponseEntity.ok("Medication loaded on drone " + serialNumber);
     }
 
     /**
