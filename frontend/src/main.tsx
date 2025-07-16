@@ -23,7 +23,7 @@ import DroneEvents from "@/routes/DroneEvents.tsx";
 import {PlaneIcon} from "lucide-react";
 import { ThemeProvider } from './components/theme-provider.tsx'
 import {Toaster} from "sonner";
-import MedicationsPage from "./routes/Medications";
+import {MedicationsPage} from "./routes/Medications";
 
 const rootRoute = createRootRoute({
   component: () => (

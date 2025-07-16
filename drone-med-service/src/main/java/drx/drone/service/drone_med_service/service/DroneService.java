@@ -168,11 +168,90 @@ public class DroneService {
         return Optional.of(droneRepository.findAll());
     }
 
-    public int getBatteryLevel(String serialNumber){
-       Optional<Drone> d = droneRepository.findById(serialNumber);
-       if (d.isPresent()){
-           return d.get().getBatteryCapacity();
-       }
-       return 0;
+    public int getBatteryLevel(String serialNumber) {
+        Optional<Drone> d = droneRepository.findById(serialNumber);
+        if (d.isPresent()) {
+            return d.get().getBatteryCapacity();
+        }
+        return 0;
     }
+
+    // 1
+    public Optional<List<Drone>> getLoadedDrones() {
+        List<Drone> loadedDrones = new ArrayList<>();
+        List<Drone> drones = droneRepository.findAll();
+        for (Drone drone : drones) {
+            if (drone.getState() == State.LOADED) {
+                loadedDrones.add(drone);
+            }
+        }
+        return Optional.of(loadedDrones);
+    }
+
+    public void sendDroneForDelivery(String serialNumber) {
+        Optional<Drone> drone = droneRepository.findById(serialNumber);
+        if (drone.isPresent()) {
+            Drone dObject = drone.get();
+            dObject.setState(State.DELIVERING);
+            droneRepository.save(dObject);
+        }
+    }
+
+    // 2
+    public Optional<List<Drone>> getDronesMarkedForDelivery() {
+        List<Drone> dronesOutForDelivery = new ArrayList<>();
+        List<Drone> drones = droneRepository.findAll();
+        for (Drone drone : drones) {
+            if (drone.getState() == State.DELIVERING) {
+                dronesOutForDelivery.add(drone);
+            }
+        }
+        return Optional.of(dronesOutForDelivery);
+    }
+
+    public void deliverDrone(String serialNumber) {
+        Optional<Drone> drone = droneRepository.findById(serialNumber);
+        if (drone.isPresent()) {
+            Drone dObject = drone.get();
+            dObject.setState(State.DELIVERED);
+            droneRepository.save(dObject);
+        }
+    }
+
+    // 3
+    public Optional<List<Drone>> getDronesMarkedAsDelivered() {
+        List<Drone> deliveredDrones = new ArrayList<>();
+        List<Drone> drones = droneRepository.findAll();
+        for (Drone drone : drones) {
+            if (drone.getState() == State.DELIVERED) {
+                deliveredDrones.add(drone);
+            }
+        }
+        return Optional.of(deliveredDrones);
+    }
+
+    public void returnDrone(String serialNumber) {
+        Optional<Drone> drone = droneRepository.findById(serialNumber);
+
+        if (drone.isPresent()) {
+            Drone dObject = drone.get();
+            dObject.setState(State.RETURNING);
+            dObject.setLoadedMeds(new ArrayList<>()); // empty meds
+            droneRepository.save(dObject);
+        }
+    }
+
+
+    public Optional<List<Drone>> getReturningDrones() {
+        List<Drone> deliveredDrones = new ArrayList<>();
+        List<Drone> drones = droneRepository.findAll();
+        for (Drone drone : drones) {
+            if (drone.getState() == State.RETURNING) {
+                deliveredDrones.add(drone);
+            }
+        }
+        return Optional.of(deliveredDrones);
+    }
+
+
 }

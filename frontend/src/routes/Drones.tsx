@@ -19,6 +19,8 @@ function DronesPage() {
         loadDrones();
     }, []);
 
+
+
     return (
         <div className="max-w-6xl mx-auto min-h-screen px-8 py-20">
             <h1 className="text-3xl font-bold text-center">All Drones</h1>

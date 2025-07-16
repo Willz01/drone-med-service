@@ -1,36 +1,78 @@
-import logo from './logo.svg'
+import {useEffect, useState} from "react";
+
 
 function App() {
-  return (
-    <div className="text-center">
-      <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">
-        <img
-          src={logo}
-          className="h-[40vmin] pointer-events-none animate-[spin_20s_linear_infinite]"
-          alt="logo"
-        />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
-      </header>
-    </div>
-  )
+
+    // STATE == "LOADED"
+    const [loadedDrones, setLoadedDrones] = useState([]);
+    useEffect(() => {
+        async function getLoadedDrones() {
+            try {
+                const res = await fetch("http://localhost:8080/api/v1/drones/loaded"); // get all drones
+                const data = await res.json();
+                setLoadedDrones(data);
+            } catch (error) {
+                console.error("Error fetching drones:", error);
+            }
+        }
+
+        getLoadedDrones().then(r => console.log(r));
+    }, [loadedDrones]);
+
+    // STATE == "DELIVERING"
+    const [dronesForDelivery, setDronesForDelivery] = useState([]);
+    useEffect(() => {
+        async function getDronesForDelivery() {
+            try {
+                const res = await fetch("http://localhost:8080/api/v1/drones/forDelivery"); // get all drones
+                const data = await res.json();
+                setDronesForDelivery(data);
+            } catch (error) {
+                console.error("Error fetching drones:", error);
+            }
+        }
+
+        getDronesForDelivery().then(r => console.log(r));
+    }, [dronesForDelivery]);
+
+    // STATE == "DELIVERED"
+    const [deliveredDrones, setDeliveredDrones] = useState([]);
+    useEffect(() => {
+        async function getDeliveredDrones() {
+            try {
+                const res = await fetch("http://localhost:8080/api/v1/drones/delivered"); // get all drones
+                const data = await res.json();
+                setDeliveredDrones(data);
+            } catch (error) {
+                console.error("Error fetching drones:", error);
+            }
+        }
+
+        getDeliveredDrones().then(r => console.log(r));
+    }, [deliveredDrones]);
+
+    // STATE == "RETURNING"
+    const [returningDrones, setReturningDrones] = useState([]);
+    useEffect(() => {
+        async function getReturningDrones() {
+            try {
+                const res = await fetch("http://localhost:8080/api/v1/drones/returning"); // get all drones
+                const data = await res.json();
+                setReturningDrones(data);
+            } catch (error) {
+                console.error("Error fetching drones:", error);
+            }
+        }
+
+        getReturningDrones().then(r => console.log(r));
+    }, [returningDrones]);
+
+
+    return (
+        <div className="text-center">
+
+        </div>
+    )
 }
 
 export default App

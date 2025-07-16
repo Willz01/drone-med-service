@@ -96,17 +96,58 @@ public class DroneController {
      */
     @GetMapping("/{serialNumber}/battery")
     @ResponseStatus(HttpStatus.OK)
-    public int getBatteryLevel(@PathVariable String serial_number){
+    public int getBatteryLevel(@PathVariable String serial_number) {
         // return battery level of drone(serial-number)
         return service.getBatteryLevel(serial_number);
     }
 
+    // DRONE HOME PAGE ENDPOINTS
+
+    // get all loaded drones
+    // drones ready for delivery
+    @GetMapping("/loaded")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<List<Drone>> getLoadedDrones() {
+        return service.getLoadedDrones();
+    }
+
     // send (mark) drone for delivery
     // change state from "loaded" to "delivering" (already changes from loading to loaded on weight shift)
+    @PostMapping("/{serialNumber}/setForDelivery")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void sendDroneForDelivery(@PathVariable String serialNumber) {
+        service.sendDroneForDelivery(serialNumber);
+    }
 
+    @GetMapping("/forDelivery")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<List<Drone>> getDronesMarkedForDelivery() {
+        return service.getDronesMarkedForDelivery();
+    }
 
-    // get all drones out for delivery
+    @PostMapping("/{serialNumber}/deliver")
+    @ResponseStatus(HttpStatus.OK)
+    public void deliverDrone(@PathVariable String serialNumber) {
+        service.deliverDrone(serialNumber);
+    }
 
+    @GetMapping("/delivered")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<List<Drone>> getDronesMarkedAsDelivered() {
+        return service.getDronesMarkedAsDelivered();
+    }
+
+    @PostMapping("/{serialNumber}/returnDrone")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void returnDrone(@PathVariable String serialNumber) {
+        service.returnDrone(serialNumber);
+    }
+
+    @GetMapping("/returning")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<List<Drone>> getReturningDrones() {
+        return service.getReturningDrones();
+    }
 
 
 }
