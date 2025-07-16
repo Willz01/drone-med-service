@@ -39,14 +39,14 @@ drone-med-service/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/example/drone-med-service/
-│   │   │   │   ├──── src/main/java
-│   │   │   │   │     ├──── config/
-│   │   │   │   │     ├──── controller/
-│   │   │   │   │     ├──── dto/
-│   │   │   │   │     ├──── exception/
-│   │   │   │   │     ├──── model/
-│   │   │   │   │     ├──── repository/
-│   │   │   │   │     ├──── service/
+│   │   │   │   ├── src/main/java
+│   │   │   │   │   ├── config/
+│   │   │   │   │   ├── controller/
+│   │   │   │   │   ├── dto/
+│   │   │   │   │   ├── exception/
+│   │   │   │   │   ├── model/
+│   │   │   │   │   ├── repository/
+│   │   │   │   │   ├── service/
 │   │   │   ├── resources/application.properties
 │   ├── pom.xml
 ├── frontend/
