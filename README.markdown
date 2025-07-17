@@ -1,14 +1,18 @@
 # Drone Medic Service
 
-Welcome to the Drone Medic Service, a platform for managing drone-based medical deliveries. This project is a monorepo containing both a backend (Java Spring Boot) and a frontend (Bun React) in a single Git repository. This README provides instructions on setting up and running both components, as well as details on how the frontend interacts with the backend endpoints for data fetching.
+Welcome to the Drone Medic Service, a platform for managing drone-based medical deliveries. This project is a monorepo
+containing both a backend (Java Spring Boot) and a frontend (Bun React) in a single Git repository. This README provides
+instructions on setting up and running both components, as well as details on how the frontend interacts with the
+backend endpoints for data fetching.
 
 ## Table of Contents
+
 - [Prerequisites](#prerequisites)
 - [Repository Structure](#repository-structure)
 - [Backend Setup and Running](#backend-setup-and-running)
-  - [Configuration](#configuration)
-  - [Running from Terminal](#running-from-terminal)
-  - [Running from an IDE](#running-from-an-ide)
+    - [Configuration](#configuration)
+    - [Running from Terminal](#running-from-terminal)
+    - [Running from an IDE](#running-from-an-ide)
 - [Frontend Setup and Running](#frontend-setup-and-running)
 - [Backend Endpoints and Frontend Integration](#backend-endpoints-and-frontend-integration)
 
@@ -17,20 +21,24 @@ Welcome to the Drone Medic Service, a platform for managing drone-based medical 
 Before setting up the project, ensure you have the following installed:
 
 - **Backend**:
-  - Java 17 or later
-  - Maven 3.6 or later
-  - MongoDB Atlas account (for database connection)
-  - An IDE (e.g., IntelliJ IDEA, Eclipse) (optional, for IDE-based running)
+    - Java 17 or later
+    - Maven 3.6 or later
+    - MongoDB Atlas account (for database connection)
+    - An IDE (e.g., IntelliJ IDEA, Eclipse) (optional, for IDE-based running)
+
 ---
+
 - **Frontend**:
-  - Bun (Install from https://bun.sh/)
-  - Node.js (optional, for compatibility, but Bun is preferred)
+    - Bun (Install from https://bun.sh/)
+    - Node.js (optional, for compatibility, but Bun is preferred)
 
 ---
+
 - **Git**:
-  - Git installed for cloning and managing the repository
+    - Git installed for cloning and managing the repository
 
 ---
+
 ## Repository Structure
 
 The project is organized as a monorepo with both backend and frontend in the same repository:
@@ -64,7 +72,8 @@ drone-med-service/
 
 ## Backend Setup and Running
 
-The backend is a Java Spring Boot application that connects to a MongoDB Atlas database for storing and retrieving drone and delivery data.
+The backend is a Java Spring Boot application that connects to a MongoDB Atlas database for storing and retrieving drone
+and delivery data.
 
 ### Configuration
 
@@ -75,20 +84,22 @@ The backend is a Java Spring Boot application that connects to a MongoDB Atlas d
    ```
 
 2. **Configure MongoDB Atlas**:
-   - Create a MongoDB Atlas account and set up a cluster.
-   - Get the MongoDB connection string (e.g., `mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority`).
-   - Open the `backend/src/main/resources/application.properties` file and update the following properties:
-     ```properties
-     spring.data.mongodb.uri=<your-mongodb-atlas-connection-string>
-     spring.data.mongodb.database=<your-database-name>
-     ```
-   - Replace `<your-mongodb-atlas-connection-string>` with your MongoDB Atlas connection string and `<your-database-name>` with the name of your database (e.g., `drone_medic_db`).
+    - Create a MongoDB Atlas account and set up a cluster.
+    - Get the MongoDB connection string (
+      e.g., `mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority`).
+    - Open the `backend/src/main/resources/application.properties` file and update the following properties:
+      ```properties
+      spring.data.mongodb.uri=<your-mongodb-atlas-connection-string>
+      spring.data.mongodb.database=<your-database-name>
+      ```
+    - Replace `<your-mongodb-atlas-connection-string>` with your MongoDB Atlas connection string
+      and `<your-database-name>` with the name of your database (e.g., `drone_medic_db`).
 
 3. **Install Dependencies**:
-   - Run the following command to download dependencies:
-     ```bash
-     mvn clean install
-     ```
+    - Run the following command to download dependencies:
+      ```bash
+      mvn clean install
+      ```
 
 ### Running from Terminal
 
@@ -117,146 +128,150 @@ The frontend is a React application built with Bun for package management and ru
    ```
 
 2. **Install Dependencies**:
-   - Ensure Bun is installed. Install dependencies using:
-     ```bash
-     bun install
-     ```
+    - Ensure Bun is installed. Install dependencies using:
+      ```bash
+      bun install
+      ```
 
 3. **Run the Development Server**:
-   - Start the frontend development server:
-     ```bash
-     bun run dev
-     ```
-   - The frontend will be available at `http://localhost:3000`
+    - Start the frontend development server:
+      ```bash
+      bun run dev
+      ```
+    - The frontend will be available at `http://localhost:3000`
 
 4. **Build for Production** (optional):
-   - To create a production build:
-     ```bash
-     bun run build
-     ```
-   - Serve the production build:
-     ```bash
-     bun run preview
-     ```
+    - To create a production build:
+      ```bash
+      bun run build
+      ```
+    - Serve the production build:
+      ```bash
+      bun run preview
+      ```
 
 ----
+
 ## Backend Endpoints and Frontend Integration
 
-The backend exposes RESTful API endpoints that the frontend uses to fetch and manage data related to drones and medications.
+The backend exposes RESTful API endpoints that the frontend uses to fetch and manage data related to drones and
+medications.
 
 ### Backend Endpoints
 
 The backend provides the following endpoints (adjust based on your actual implementation):
 
 - **GET api/v1/drones**:
-  - **Description**: Retrieves a list of all drones.
-  - **Response**: JSON array of drone objects (`{ serialNumber, weightClass, weightLimit, batteryCapacity, state, LoadedMeds }`).
-  - **Example**: `GET http://localhost:8080/v1/api/drones`
+    - **Description**: Retrieves a list of all drones.
+    - **Response**: JSON array of drone
+      objects (`{ serialNumber, weightClass, weightLimit, batteryCapacity, state, LoadedMeds }`).
+    - **Example**: `GET http://localhost:8080/v1/api/drones`
 
 ----
+
 - **GET api/v1/drones/{serialNumber}**:
-  - **Description**: Retrieves details of a specific drone by serialNumber.
-  - **Response**: JSON object of a single drone.
-  - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd`
+    - **Description**: Retrieves details of a specific drone by serialNumber.
+    - **Response**: JSON object of a single drone.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd`
 
 ----
 
 - **POST api/v1/drones/register**:
-  - **Description**: Register a new drone.
-  - **Request Body**: JSON object (`{ weightClass }`).
-  - **Response**: JSON object of the created drone.
-  - **Example**: `POST http://localhost:8080/v1/api/drones/register`
+    - **Description**: Register a new drone.
+    - **Request Body**: JSON object (`{ weightClass }`).
+    - **Response**: JSON object of the created drone.
+    - **Example**: `POST http://localhost:8080/v1/api/drones/register`
 
 ----
 
 - **POST api/v1/drones/{serialNumber}/loadMeds**:
-  - **Description**: Load drone with medications.
-  - **RequestBody**: JSON object of MedRequest (`{ name, code, weight }`)
-  - **Example**: `POST http://localhost:8080/v1/api/drones/67fff78ddd/loadMeds`
+    - **Description**: Load drone with medications.
+    - **RequestBody**: JSON object of MedRequest (`{ name, code, weight }`)
+    - **Example**: `POST http://localhost:8080/v1/api/drones/67fff78ddd/loadMeds`
 
 ----
 
 - **GET api/v1/drones/{serialNumber}/medications**:
-  - **Description**: Get medications loaded on a particular drones.
-  - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/medications`
-  - **Response**: JSON array of med objects loaded on the drone
+    - **Description**: Get medications loaded on a particular drones.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/medications`
+    - **Response**: JSON array of med objects loaded on the drone
 
 ----
 
 - **GET api/v1/drones/available**:
-  - **Description**: Get all available drone <Idle>.
-  - **Example**: `GET http://localhost:8080/v1/api/drones/available`
-  - **Response**: JSON list of all available drones
+    - **Description**: Get all available drone <Idle>.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/available`
+    - **Response**: JSON list of all available drones
 
 ----
 
 - **GET api/v1/drones/{serialNumber}/battery**:
-  - **Description**: Get battery level of drone.
-  - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/battery`
-  - **Response**: Battery level of drone
+    - **Description**: Get battery level of drone.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/67fff78ddd/battery`
+    - **Response**: Battery level of drone
 
 ----
 
 - **GET api/v1/medications**:
-  - **Description**: Get all saved medications.
-  - **Example**: `GET http://localhost:8080/v1/api/medications`
-  - **Response**: JSON list of all medications
+    - **Description**: Get all saved medications.
+    - **Example**: `GET http://localhost:8080/v1/api/medications`
+    - **Response**: JSON list of all medications
 
 ----
 
 - **GET api/v1/drones/loaded**:
-  - **Description**: Get all loaded drones.Where **State==State.LOADED**
-  - **Example**: `GET http://localhost:8080/v1/api/drones/loaded`
-  - **Response**: JSON list of loaded drones
+    - **Description**: Get all loaded drones.Where **State==State.LOADED**
+    - **Example**: `GET http://localhost:8080/v1/api/drones/loaded`
+    - **Response**: JSON list of loaded drones
 
 ----
 
 - **PATCH api/v1/drones/{serialNumber}/setForDelivery**:
-  - **Description**: Change drone state to **DELIVERING**.
-  - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/setForDelivery`
-  - **Response**: HTTP.OK
+    - **Description**: Change drone state to **DELIVERING**.
+    - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/setForDelivery`
+    - **Response**: HTTP.OK
 
 ----
 
 - **GET api/v1/drones/forDelivery**:
-  - **Description**: Get all drones where **State==State.DELIVERING**.
-  - **Example**: `GET http://localhost:8080/v1/api/drones/loaded`
-  - **Response**: JSON list of drones ready for delivery.
+    - **Description**: Get all drones where **State==State.DELIVERING**.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/loaded`
+    - **Response**: JSON list of drones ready for delivery.
 
 ----
 
 - **PATCH api/v1/drones/{serialNumber}/deliver**:
-  - **Description**: Change drone state to **DELIVERED**
-  - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/deliver`
-  - **Response**: HTTP.OK
+    - **Description**: Change drone state to **DELIVERED**
+    - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/deliver`
+    - **Response**: HTTP.OK
 
 ----
 
 - **GET api/v1/drones/delivered**:
-  - **Description**: Get all drones where **State==State.DELIVERED**.
-  - **Example**: `GET http://localhost:8080/v1/api/drones/delivered`
-  - **Response**: JSON list of delivered drones.
+    - **Description**: Get all drones where **State==State.DELIVERED**.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/delivered`
+    - **Response**: JSON list of delivered drones.
 
 ----
 
 - **PATCH api/v1/drones/{serialNumber}/returnDrone**:
-  - **Description**: Change drone state to **RETURNING**
-  - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/returnDrone`
-  - **Response**: HTTP.OK
+    - **Description**: Change drone state to **RETURNING**
+    - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/returnDrone`
+    - **Response**: HTTP.OK
 
 ----
 
 - **GET api/v1/drones/returning**:
-  - **Description**: Get all drones where **State==State.DELIVERED**.
-  - **Example**: `GET http://localhost:8080/v1/api/drones/returning`
-  - **Response**: JSON list of returning drones.
+    - **Description**: Get all drones where **State==State.DELIVERED**.
+    - **Example**: `GET http://localhost:8080/v1/api/drones/returning`
+    - **Response**: JSON list of returning drones.
 
 ----
 
 - **PATCH api/v1/drones/{serialNumber}/markIdle**:
-  - **Description**: Change drone state to **IDLE**
-  - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/markIdle`
-  - **Response**: HTTP.OK
+    - **Description**: Change drone state to **IDLE**
+    - **Example**: `PATCH http://localhost:8080/v1/api/drones/67fff78ddd/markIdle`
+    - **Response**: HTTP.OK
 
 ----
 
@@ -324,6 +339,7 @@ additional details like medication codes, ensuring users stay informed about dro
 ```
 
 ![Drone Events](readme/event.png)
+---
 
 #### Medication
 
