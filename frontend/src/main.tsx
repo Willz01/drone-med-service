@@ -14,7 +14,7 @@ import reportWebVitals from './reportWebVitals.ts'
 
 import { Link } from "@tanstack/react-router";
 
-import App from './App.tsx'
+import {DronesHomePage} from './routes/Home.tsx'
 import DronesPage from "@/routes/Drones.tsx";
 import RegisterDronePage from "@/routes/RegisterDrone.tsx";
 import IdleDronesPage from "@/routes/IdleDrones.tsx";
@@ -29,7 +29,7 @@ const rootRoute = createRootRoute({
   component: () => (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <div className="p-2 flex gap-6 m-auto max-w-3xl bg-gray-700">
+          <div className="p-2 flex gap-6 m-auto max-w-3xl ">
 
             <Link to="/" className="[&.active]:font-bold mr-5">
               <PlaneIcon />
@@ -75,7 +75,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: App,
+  component: DronesHomePage,
 })
 
 /**

@@ -71,7 +71,7 @@ public class DroneService {
             Drone drone = optionalDrone.get();
 
             // Check battery capacity
-            if (drone.getBatteryCapacity() < 25) {
+            if (drone.getBatteryCapacity() <= 25) {
                 return new ErrorResponse("601", "BATTERY LEVEL BELOW 25%");
             }
 
@@ -89,11 +89,11 @@ public class DroneService {
             }
 
             // Check safe weight threshold
-            if (medWeight + totalLoadedWeight > maxAllowableWeight) {
+            /*if (medWeight + totalLoadedWeight > maxAllowableWeight) {
                 drone.setState(State.LOADED);
                 droneRepository.save(drone);
                 return new ErrorResponse("605", "EXCEEDS SAFE WEIGHT THRESHOLD");
-            }
+            }*/
 
             // Proceed with loading
             if (medWeight + totalLoadedWeight <= droneWeightLimit) {
@@ -254,4 +254,14 @@ public class DroneService {
     }
 
 
+    public void markIdle(String serialNumber) {
+        Optional<Drone> drone = droneRepository.findById(serialNumber);
+
+        if (drone.isPresent()) {
+            Drone dObject = drone.get();
+            dObject.setState(State.IDLE);
+            // dObject.setLoadedMeds(new ArrayList<>()); // empty meds
+            droneRepository.save(dObject);
+        }
+    }
 }

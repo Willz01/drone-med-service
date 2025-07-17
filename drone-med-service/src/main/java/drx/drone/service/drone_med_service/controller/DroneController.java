@@ -113,7 +113,7 @@ public class DroneController {
 
     // send (mark) drone for delivery
     // change state from "loaded" to "delivering" (already changes from loading to loaded on weight shift)
-    @PostMapping("/{serialNumber}/setForDelivery")
+    @PatchMapping("/{serialNumber}/setForDelivery")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void sendDroneForDelivery(@PathVariable String serialNumber) {
         service.sendDroneForDelivery(serialNumber);
@@ -125,7 +125,7 @@ public class DroneController {
         return service.getDronesMarkedForDelivery();
     }
 
-    @PostMapping("/{serialNumber}/deliver")
+    @PatchMapping("/{serialNumber}/deliver")
     @ResponseStatus(HttpStatus.OK)
     public void deliverDrone(@PathVariable String serialNumber) {
         service.deliverDrone(serialNumber);
@@ -137,7 +137,7 @@ public class DroneController {
         return service.getDronesMarkedAsDelivered();
     }
 
-    @PostMapping("/{serialNumber}/returnDrone")
+    @PatchMapping("/{serialNumber}/returnDrone")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void returnDrone(@PathVariable String serialNumber) {
         service.returnDrone(serialNumber);
@@ -149,5 +149,10 @@ public class DroneController {
         return service.getReturningDrones();
     }
 
+    @PatchMapping("/{serialNumber}/markIdle")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void markDroneIdle(@PathVariable String serialNumber) {
+        service.markIdle(serialNumber);
+    }
 
 }

@@ -14,14 +14,7 @@ function DroneCard({
                        weightLimit,
                        batteryLevel,
                        state,
-                       loadedMeds,
-                   }: {
-    serialNumber: number;
-    weightClass: string;
-    weightLimit: number;
-    batteryLevel: number;
-    state: string;
-    loadedMeds: string[];
+                       loadedMeds, }: { serialNumber: number; weightClass: string; weightLimit: number; batteryLevel: number; state: string; loadedMeds: string[];
 }) {
 
     const getStateStyles = (state: string) => {
@@ -96,7 +89,7 @@ function DroneCard({
 
             setInterval(() =>{
                 document.location.reload();
-            }, 3000)
+            }, 1500)
 
         } catch (error) {
            console.log(error);

@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import App from './App.tsx'
+import Home from './routes/Home.tsx'
 
-describe('App', () => {
+describe('Home', () => {
   test('renders', () => {
-    render(<App />)
+    render(<Home />)
     expect(screen.getByText('Learn React')).toBeDefined()
   })
 })
