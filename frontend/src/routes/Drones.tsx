@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import DroneCard from "@/components/DroneCard.tsx";
+import {saveEventToLocalStorage} from "@/routes/DroneEvents.tsx";
 
 function DronesPage() {
     document.title = "Drones";
@@ -12,6 +13,7 @@ function DronesPage() {
                 const res = await fetch("http://localhost:8080/api/v1/drones"); // get all drones
                 const data = await res.json();
                 setDroneList(data);
+                saveEventToLocalStorage(`Fetched all drones[LOADED, LOADING, IDLE, etc]`);
             } catch (error) {
                 console.error("Error fetching drones:", error);
             }

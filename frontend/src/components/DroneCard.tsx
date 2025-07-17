@@ -4,9 +4,11 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.t
 import {Button} from "@/components/ui/button.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import {useState, useEffect} from "react";
+import {useState, useEffect, type ChangeEvent, type FormEvent} from "react";
 import {toast} from "sonner";
 import {HoverCard, HoverCardTrigger, HoverCardContent} from "@/components/ui/hover-card.tsx";
+import {saveEventToLocalStorage} from "@/routes/DroneEvents.tsx";
+
 
 function DroneCard({
                        serialNumber,
@@ -14,7 +16,14 @@ function DroneCard({
                        weightLimit,
                        batteryLevel,
                        state,
-                       loadedMeds, }: { serialNumber: number; weightClass: string; weightLimit: number; batteryLevel: number; state: string; loadedMeds: string[];
+                       loadedMeds,
+                   }: {
+    serialNumber: number;
+    weightClass: string;
+    weightLimit: number;
+    batteryLevel: number;
+    state: string;
+    loadedMeds: string[];
 }) {
 
     const getStateStyles = (state: string) => {
@@ -69,12 +78,13 @@ function DroneCard({
             headers: {"Content-Type": "application/json"},
         });
         if (!res.ok) {
+            saveEventToLocalStorage(`Failed to fetch medication ${medId}`);
             throw new Error(`Failed to fetch medication ${medId}`);
         }
         return await res.json();
     };
 
-    const handleMedSubmit = async (e: React.FormEvent) => {
+    const handleMedSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
             const res = await fetch(`http://localhost:8080/api/v1/drones/${serialNumber}/loadMeds`, {
@@ -85,25 +95,27 @@ function DroneCard({
             const data = await res.json();
             console.log(data);
 
+            saveEventToLocalStorage(`New medication loaded on drone ${serialNumber}`);
             toast(data.message, {description: data.code, duration: 2000})
 
-            setInterval(() =>{
+            setInterval(() => {
                 document.location.reload();
             }, 1500)
 
         } catch (error) {
-           console.log(error);
+            console.log(error);
+            saveEventToLocalStorage(`Error loading drone with medication.`);
         }
     };
 
-    const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.toUpperCase();
         if (/^[A-Z0-9_]*$/.test(value)) {
             setMedFormData({...medFormData, code: value});
         }
     };
 
-    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         if (/^[A-Za-z0-9_-]*$/.test(value)) {
             setMedFormData({...medFormData, name: value});

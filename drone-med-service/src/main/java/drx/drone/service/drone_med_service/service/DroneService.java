@@ -72,6 +72,8 @@ public class DroneService {
 
             // Check battery capacity
             if (drone.getBatteryCapacity() <= 25) {
+                drone.setState(State.LOADED);
+                droneRepository.save(drone);
                 return new ErrorResponse("601", "BATTERY LEVEL BELOW 25%");
             }
 
@@ -95,8 +97,20 @@ public class DroneService {
                 return new ErrorResponse("605", "EXCEEDS SAFE WEIGHT THRESHOLD");
             }*/
 
-            // Proceed with loading
-            if (medWeight + totalLoadedWeight <= droneWeightLimit) {
+            if (medWeight + totalLoadedWeight == droneWeightLimit) {
+                Medication medication = buildMedication(medRequest);
+                medicationRepository.save(medication);
+
+                String medID = medication.getId();
+                drone.getLoadedMeds().add(medID);
+                drone.setState(State.LOADED);
+                drone.setBatteryCapacity(drone.getBatteryCapacity() - 15);
+
+                droneRepository.save(drone);
+                return new ErrorResponse("200", "MEDS LOADED");
+            }
+
+            if (medWeight + totalLoadedWeight < droneWeightLimit) {
                 Medication medication = buildMedication(medRequest);
                 medicationRepository.save(medication);
 

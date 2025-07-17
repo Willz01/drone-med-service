@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {toast} from "sonner";
+import {saveEventToLocalStorage} from "@/routes/DroneEvents.tsx";
 
 
 function RegisterDronePage() {
@@ -24,7 +25,6 @@ function RegisterDronePage() {
         e.preventDefault();
         console.log("Registering drone:", formData);
 
-
         fetch("http://localhost:8080/api/v1/drones/register", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -36,12 +36,10 @@ function RegisterDronePage() {
             })
         });
 
-
+        saveEventToLocalStorage(`New ${formData.weightClass} drone registered.`);
         setInterval(() => {
             document.location.href = "/idle-drones"
         }, 3000)
-
-
     };
 
     return (

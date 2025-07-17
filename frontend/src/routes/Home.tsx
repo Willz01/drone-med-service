@@ -2,6 +2,7 @@ import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {useEffect, useState} from "react";
 import {toast} from "sonner";
+import {saveEventToLocalStorage} from "@/routes/DroneEvents.tsx";
 
 
 function CardThing({serialNumber, weightClass, state, batteryCapacity}: {
@@ -18,53 +19,41 @@ function CardThing({serialNumber, weightClass, state, batteryCapacity}: {
                 // patch call
                 fetch(`http://localhost:8080/api/v1/drones/${serialNumber}/setForDelivery`, {
                     method: "PATCH",
-                    // headers: {"Content-Type": "application/json"},
                 }).then(() => {
                     toast("Drone sent for delivery.", {
-                        description:`Drone ${serialNumber} ready for delivery`  ,
+                        description: `Drone ${serialNumber} ready for delivery`,
                         duration: 5000,
                     })
-
-                    //setTimeout(() => {document.location.reload()}, 2000);
                 });
                 break
             case "DELIVERING":
                 fetch(`http://localhost:8080/api/v1/drones/${serialNumber}/deliver`, {
                     method: "PATCH",
-                    // headers: {"Content-Type": "application/json"},
                 }).then(() => {
-                    toast("Drone out to recipient.", {
-                        description:`Drone ${serialNumber} was sent for delivery.`  ,
+                    toast("Drone on the way to recipient.", {
+                        description: `Drone ${serialNumber} was sent for delivery.`,
                         duration: 5000,
                     })
-
-                    //setTimeout(() => {document.location.reload()}, 2000);
                 });
                 break
             case "DELIVERED":
                 fetch(`http://localhost:8080/api/v1/drones/${serialNumber}/returnDrone`, {
                     method: "PATCH",
-                    // headers: {"Content-Type": "application/json"},
                 }).then(() => {
-                    toast("Drone out to recipient.", {
-                        description:`Drone ${serialNumber} ready for delivery`  ,
+                    toast("Drone delivered.", {
+                        description: `Drone ${serialNumber} has been delivered`,
                         duration: 5000,
                     })
-
-                    //setTimeout(() => {document.location.reload()}, 2000);
                 });
                 break
             case "RETURNING":
                 fetch(`http://localhost:8080/api/v1/drones/${serialNumber}/markIdle`, {
                     method: "PATCH",
-                    // headers: {"Content-Type": "application/json"},
                 }).then(() => {
-                    toast("Drone marked as idle", {
-                        description:`Drone ${serialNumber} has returned from delivery and is idle`  ,
+                    toast("Drone returning.", {
+                        description: `Drone ${serialNumber} on its way back.`,
                         duration: 5000,
                     })
-
-                    //setTimeout(() => {document.location.reload()}, 2000);
                 });
                 break
             default:
@@ -124,8 +113,11 @@ export function DronesHomePage() {
                 const res = await fetch("http://localhost:8080/api/v1/drones/loaded"); // get all drones
                 const data = await res.json();
                 setLoadedDrones(data);
+
+                saveEventToLocalStorage(`Fetched all loaded drones`);
             } catch (error) {
                 console.error("Error fetching drones:", error);
+                saveEventToLocalStorage(`Error fetching drones`);
             }
         }
 
@@ -140,8 +132,12 @@ export function DronesHomePage() {
                 const res = await fetch("http://localhost:8080/api/v1/drones/forDelivery"); // get all drones
                 const data = await res.json();
                 setDronesForDelivery(data);
+
+                saveEventToLocalStorage(`Fetched all drones ready for delivery.`);
             } catch (error) {
                 console.error("Error fetching drones:", error);
+                saveEventToLocalStorage(`Error fetching drones ready for delivery.`);
+
             }
         }
 
@@ -156,8 +152,11 @@ export function DronesHomePage() {
                 const res = await fetch("http://localhost:8080/api/v1/drones/delivered"); // get all drones
                 const data = await res.json();
                 setDeliveredDrones(data);
+
+                saveEventToLocalStorage(`Fetched all delivered drones.`);
             } catch (error) {
                 console.error("Error fetching drones:", error);
+                saveEventToLocalStorage(`Error fetching delivered drones.`);
             }
         }
 
@@ -172,23 +171,16 @@ export function DronesHomePage() {
                 const res = await fetch("http://localhost:8080/api/v1/drones/returning"); // get all drones
                 const data = await res.json();
                 setReturningDrones(data);
+
+                saveEventToLocalStorage(`Fetched all returning drones.`);
             } catch (error) {
                 console.error("Error fetching drones:", error);
+                saveEventToLocalStorage(`Error fetching returning drones.`);
             }
         }
 
         getReturningDrones()
     }, [returningDrones]);
-
-
-
-    // Group drones by state
-  /*  const groupedDrones = {
-        loaded: drones.filter((drone) => drone.state === "loaded"),
-        ready: drones.filter((drone) => drone.state === "ready"),
-        out: drones.filter((drone) => drone.state === "out"),
-        returning: drones.filter((drone) => drone.state === "returning"),
-    }*/
 
     return (
         <div className="flex justify-center">
@@ -241,10 +233,10 @@ export function DronesHomePage() {
                 <section className="mb-8">
                     <h2 className="text-xl font sm:grid-cols-2 lg:grid-cols-3 gap-4">Returning drones</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {returningDrones.map(({batteryCapacity, serialNumber, state, weightClass}) => (
-                        <CardThing serialNumber={serialNumber} weightClass={weightClass}
-                                   state={state} batteryCapacity={batteryCapacity}/>
-                    ))}
+                        {returningDrones.map(({batteryCapacity, serialNumber, state, weightClass}) => (
+                            <CardThing serialNumber={serialNumber} weightClass={weightClass}
+                                       state={state} batteryCapacity={batteryCapacity}/>
+                        ))}
                     </div>
                     {returningDrones.length === 0 && (
                         <p className="text-center text-muted-foreground">No returning drones.</p>

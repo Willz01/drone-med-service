@@ -35,6 +35,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import {useEffect} from "react";
+import {saveEventToLocalStorage} from "@/routes/DroneEvents.tsx";
 
 // medication record
 export type Medication = {
@@ -83,11 +84,11 @@ export const columns: ColumnDef<Medication>[] = [
     },
     {
         accessorKey: "weight",
-        header: () => <div className="text-right">Weight (mg)</div>,
+        header: () => <div className="text-center">Weight (g)</div>,
         cell: ({row}) => {
             const weight = parseFloat(row.getValue("weight"))
-            const formatted = weight.toFixed(1) + " mg"
-            return <div className="text-right font-medium">{formatted}</div>
+            const formatted = weight.toFixed(1) + " g"
+            return <div className="text-center font-medium">{formatted}</div>
         },
     },
     {
@@ -142,6 +143,8 @@ export function MedicationsPage() {
                 const res = await fetch("http://localhost:8080/api/v1/medications"); // get all drones
                 const data = await res.json();
                 setMedications(data);
+
+                saveEventToLocalStorage(`Fetched all Saved Medications.`);
             } catch (error) {
                 console.error("Error fetching drones:", error);
             }

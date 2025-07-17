@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import DroneCard from "@/components/DroneCard.tsx";
 import {Toaster} from "sonner";
+import {saveEventToLocalStorage} from "@/routes/DroneEvents.tsx";
 
 function IdleDronesPage(){
     document.title = "Idle Drones";
@@ -13,6 +14,7 @@ function IdleDronesPage(){
                 const res = await fetch("http://localhost:8080/api/v1/drones/available"); // get all drones
                 const data = await res.json();
                 setDroneList(data);
+                saveEventToLocalStorage(`Fetched all available drones.`);
             } catch (error) {
                 console.error("Error fetching drones:", error);
             }
@@ -39,10 +41,8 @@ function IdleDronesPage(){
                                     weightClass={weightClass}
                                     loadedMeds={loadedMeds}
                                 />
-
                             </>
                         ))
-
                     ) : (
                         <p className="text-center text-gray-500 col-span-full">No drones available</p>
                     )}

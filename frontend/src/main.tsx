@@ -64,7 +64,6 @@ const rootRoute = createRootRoute({
         <Outlet />
       </div>
       </ThemeProvider>
-      <TanStackRouterDevtools />
     </>
   ),
 })
