@@ -329,7 +329,7 @@ Users can initiate a "Load medication" action for idle drones, with the UI refle
 ![Idle](readme/idle-drones.png)
 ---
 
-#### Drone Events ()
+#### Drone Events ("/events")
 
 ```
 This section displays real-time updates and messages related to drone activities. 
@@ -341,7 +341,7 @@ additional details like medication codes, ensuring users stay informed about dro
 ![Drone Events](readme/event.png)
 ---
 
-#### Medication
+#### Medication ("/medications")
 
 ```
 This section lists all available medications in a tabular format, with columns for name, 
